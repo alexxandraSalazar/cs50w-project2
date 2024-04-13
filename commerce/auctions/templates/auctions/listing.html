@@ -1,0 +1,94 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+
+{% if user.is_authenticated %}
+    {% if not listac and cUser == winner %}
+    <div class="alert alert-success alert-dismissible">
+        <strong>You won the auction!</strong> 
+    </div>
+    {% endif %}
+
+
+    {% if cUser == owner and listac %}
+        <form action="{% url 'closeAuc' id=items.id %}" method="POST">
+            {% csrf_token %}
+            <input type="submit" value="Close Auction">
+        </form>
+        <br>
+    {% endif %}
+
+    <br>
+
+    {% if listac %}
+        {% if isinWL %}
+            <form action="{% url 'removewatchlist' id=items.id %}" method="POST">
+                {% csrf_token %}
+                <input type="submit" value="Remove from watchlist">
+            </form>
+        {% else %}
+            <form action="{% url 'addwatchlist' id=items.id %}" method="POST">
+                {% csrf_token %}
+                <input type="submit" value="Add to watchlist">
+            </form>
+        {% endif %}
+    {% endif %}
+
+    <br>
+    <br>
+{% endif %}
+
+<h2>Listing: {{ items.title }}</h2>
+
+<div class="listing"> 
+    <div>
+        <img class="float-left img-thumbnail img" src="{{ items.image_url }}" alt="{{ items.title }}">
+    </div>
+    <div class="right">
+        <a href="{% url 'listing' id=items.id %}">{{ items.title }}</a>
+        <br><br>
+        Price: ${{ items.price.bid }}
+        <br><br>
+        {{ items.description }}
+    </div>
+</div>
+
+{% if user.is_authenticated %}
+    {% if listac %}
+        <form action="{% url 'bid' id=items.id %}" method="POST">
+            {% csrf_token %}
+            <br>
+            <input name="price" type="text" placeholder="Bid">
+            <input type="submit" value="Submit bid">
+        </form>
+    {% endif %}
+{% endif %}
+
+<br>
+<br>
+
+Details
+<br>
+Listed by: {{ items.owner }}
+<br>
+Category: {{ items.category }}
+<br>
+<br>
+
+{% if user.is_authenticated %}
+    <form action="{% url 'comment' id=items.id %}" method="POST">
+        {% csrf_token %}
+        Comments
+        <br>
+        <input name="comment" type="text" placeholder="Add a comment">
+        <input type="submit" value="Submit">
+    </form>
+
+    <ul>
+        {% for comment in allcomments %}
+            <li>{{ comment.comment }}</li>
+        {% endfor %}
+    </ul>
+{% endif %}
+
+{% endblock %}
