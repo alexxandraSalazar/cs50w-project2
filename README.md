@@ -1,6 +1,6 @@
 # Project2: Commerce
 
-An encyclopedia website based on wikipedia.
+Auctions websites.
 
 # Developed using:
 
