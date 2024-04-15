@@ -47,9 +47,13 @@ Install dependencies
 Go to the project directory
 
 ```bash
-  cd 2
+  cd cs50w-project2
 ```
+make migrations 
 
+```bash
+  python manage.py migrate
+```
 Start the server
 
 ```bash
