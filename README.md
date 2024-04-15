@@ -27,7 +27,7 @@ If you want to use the virtual enviroment
   pip install virtualenv
 ```
 ```bash
-  python -m virtualenv
+  python -m venv env
 ```
 or 
 ```bash
@@ -35,7 +35,7 @@ or
 ```
 
 ```bash
-  .\eenv\Scripts\activate
+  .\env\Scripts\activate
 ```
 
 
