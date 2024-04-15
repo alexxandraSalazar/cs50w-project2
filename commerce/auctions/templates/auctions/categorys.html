@@ -1,17 +1,20 @@
 {% extends "auctions/layout.html" %}
 
 {% block body %}
-    <h2>Categorys</h2>
-    <form action="{% url 'showcategory' %}" method ="POST">
-        {% csrf_token %}
-        </br>
-        <label for="category">Category:</label>
-        <select  class="form-control" name="category" id="category">
-            {% for category in categorys %}
-                <option value="{{ category.name }}">{{ category.name }}</option>
-            {% endfor %}
-        </select>
-    </br>
-<input class="btn btn-primary" type="submit" name="submit">
-<form>
+    <div class="container form-group text-center">
+        <h2 class="mb-4">Categories</h2>
+        <form action="{% url 'showcategory' %}" method="POST">
+            {% csrf_token %}
+            
+            <div class="form-group text-center">
+                <select class="form-control form-control-sm mx-auto" style="width: 150px;" name="category" id="category">
+                    {% for category in categorys %}
+                        <option value="{{ category.name }}">{{ category.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <button class="btn btn-primary" type="submit" name="submit">Submit</button>
+        </form>
+    </div>
 {% endblock %}
