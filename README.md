@@ -1,65 +1,66 @@
 # Project2: Commerce
 
-Auctions websites.
+An auctions website.
 
-# Developed using:
+## Developed using:
 
-> - Django
-> - Python
-> - HTML
-> - CSS
-> - Jinja
-> - SQL
-> - Boostrap
-
-
+- Django
+- Python
+- HTML
+- CSS
+- Jinja
+- SQL
+- Bootstrap
 
 ## Run Locally
 
-Clone the project
+### Clone the project
 
 ```bash
-  git clone https://github.com/Alex000127/cs50w-project2.git
+git clone https://github.com/Alex000127/cs50w-project2.git
 ```
 
-If you want to use the virtual enviroment
+### Set up the virtual environment (optional)
+
 ```bash
-  pip install virtualenv
-```
-```bash
-  python -m venv env
-```
-or 
-```bash
-  virtualenv env
+pip install virtualenv
 ```
 
 ```bash
-  .\env\Scripts\activate
+python -m venv env
 ```
-
-
-Install dependencies
+or
+```bash
+virtualenv env
+```
 
 ```bash
-  python -m pip install -r requirements.txt
+.\env\Scripts\activate
 ```
-Go to the project directory
+
+### Install dependencies
 
 ```bash
-  cd cs50w-project2
+python -m pip install -r requirements.txt
 ```
-make migrations 
+
+### Navigate to the project directory
 
 ```bash
-  python manage.py migrate
+cd cs50w-project2
 ```
-Start the server
+
+### Apply migrations
 
 ```bash
-  python manage.py runserver
+python manage.py migrate
 ```
 
+### Start the server
+
+```bash
+python manage.py runserver
+```
 
 ## Author
 
