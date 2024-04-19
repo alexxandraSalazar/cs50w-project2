@@ -16,8 +16,6 @@
             <br>
         {% endif %}
 
-      
-
         {% if listac %}
             {% if isinWL %}
                 <form action="{% url 'removewatchlist' id=items.id %}" method="POST">
@@ -36,67 +34,63 @@
     {% endif %}
 
     <h2>Listing: {{ items.title }}</h2>
-            </br>
-    <div class="listing row "> 
+    <div class="listing row"> 
         <div class="col-md-3">
-            <img class="img-thumbnail" src="{{ items.image_url }}" alt="{{ items.title }}" style="width: 250px; height: auto;">
+            <img class="img-thumbnail" src="{{ items.image_url }}" alt="{{ items.title }}">
         </div>
-        <div >
+        <div class="col-md-9">
             <h4>{{ items.title }}</h4>
             <p>Price: ${{ items.price.bid }}</p>
             <p>{{ items.description }}</p>
+            {% if user.is_authenticated and listac %}
+                <form action="{% url 'bid' id=items.id %}" method="POST" class="px-0">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <input name="price" type="text" placeholder="Bid" class="form-control form-control-sm" style="width: 150px;">
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-sm">Submit Bid</button>
+                </form>
+            {% endif %}
         </div>
     </div>
-</br>
+
+    <br>
+
+    <div class="details">
+        <h3>Details</h3>
+        <p><b>Listed by:</b> {{ items.owner }}</p>
+        <p><b>Category:</b> {{ items.category }}</p>
+    </div>
+
     {% if user.is_authenticated %}
-        {% if listac %}
-            <form action="{% url 'bid' id=items.id %}" method="POST" class="px-0">
-                {% csrf_token %}
-                <div class="form-group">
-                    <input name="price" type="text" placeholder="Bid" class="form-control form-control-sm" style="width: 150px;">
-                </div>
-                <button type="submit" class="btn btn-primary btn-sm">Submit Bid</button>
-            </form>
+    <form action="{% url 'comment' id=items.id %}" method="POST" >
+        {% csrf_token %}
+        <div class="form-group">
+               <h3 class="px-0">Comments</h3>
+            <input name="comment" type="text" placeholder="Add a comment" class="form-control form-control-sm" style="width: 250px;">
+        </div>
+        <button type="submit" class="btn btn-primary btn-sm">Submit</button>
+    </form>
         {% endif %}
-    {% endif %}
-
-    <br>
-    <br>
-
-    <h3 class="px-0">Details</h3>
-    <p> <b>Listed by:</b>  {{ items.owner }}</p>
-    <p><b>Category:</b>  {{ items.category }}</p>
-    <br>
-
-    {% if user.is_authenticated %}
-        <form action="{% url 'comment' id=items.id %}" method="POST" >
-            {% csrf_token %}
-            <div class="form-group">
-                   <h3 class="px-0">Comments</h3>
-                <input name="comment" type="text" placeholder="Add a comment" class="form-control form-control-sm" style="width: 250px;">
+        <br>
+        <h3 class="px-0">All Comments</h3>
+        {% for comment in allcomments %}
+    <ul>       
+<div class="comments-container">
+    <ul id="comments-list" class="comments-list">
+        <li>
+            <div class="comment-main-level">
+                <div class="comment-box">
+                    <div class="comment-head">
+                        <h6 class="comment-name by-author">{{comment.commenter}}</h6>
+                    </div>
+                    <div class="comment-content">
+                        {{ comment.comment }}
+                    </div>
+                </div>
             </div>
-            <button type="submit" class="btn btn-primary btn-sm">Submit</button>
-        </form>
-
-        <ul>
-            {% for comment in allcomments %}
-                
-	<div class="comments-container">
-		<ul id="comments-list" class="comments-list">
-			<li>
-				<div class="comment-main-level">
-					<div class="comment-box">
-						<div class="comment-head">
-							<h6 class="comment-name by-author">{{comment.commenter}}</h6>
-						</div>
-						<div class="comment-content">
-							{{ comment.comment }}
-						</div>
-					</div>
-				</div>
-				
-            {% endfor %}
-        </ul>
-    {% endif %}
+            
+        {% endfor %}
+    </ul>
 </div>
 {% endblock %}
