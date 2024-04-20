@@ -138,7 +138,7 @@ def listing(request, id):
             "winner":winner
         })
     else:
-        return render(request, "auctions/error.html")
+        return render(request, "auctions/error.html", {'message': "Item not found"})
     
 def addwatchlist(request,id):
     list = Auction_listing.objects.filter(active=True, id=id).first()
@@ -217,13 +217,28 @@ def bid(request, id):
         return HttpResponseRedirect(reverse("listing", args=(id, )))
         
         
-def closeAuc(request,id):
+def closeAuc(request, id):
     if request.method == 'POST':
         list = Auction_listing.objects.get(pk=id)
         isinWL = request.user in list.watchlist.all()
+        allcomments = Comment.objects.filter(auction=list)
+        listac = list.active
         list.active = False
-        list.save()    
+        cUser = request.user
+        owner = list.owner
+        winner = list.price.bidder
+        print(winner)
+        list.save()   
         return render(request, "auctions/listing.html",{
-        "items": list,
-        "isinWL" : isinWL,
-    })
+            "items": list,
+            "isinWL": isinWL,
+            "cUser": cUser,
+            "owner": owner,
+            "allcomments": allcomments,
+            "listac": listac,
+            "winner": winner
+        })
+    else:
+        # Add a default response in case the request method is not POST
+        return render(request, "auctions/error.html", {'message': "Method no valid. If you wanna see the item use /listing/'item id'"})
+        

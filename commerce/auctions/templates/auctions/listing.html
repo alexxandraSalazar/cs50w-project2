@@ -5,6 +5,11 @@
         {% if not listac and cUser == winner %}
             <div class="alert alert-success alert-dismissible">
                 <strong>You won the auction!</strong> 
+
+            </div>
+            {%elif not listac and cUser == owner %}
+            <div class="alert alert-success alert-dismissible">
+                <strong> {{winner}} won the auction!</strong> 
             </div>
         {% endif %}
 
