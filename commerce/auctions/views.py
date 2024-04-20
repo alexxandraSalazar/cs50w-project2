@@ -27,7 +27,6 @@ def login_view(request):
         password = request.POST["password"]
         user = authenticate(request, username=username, password=password)
 
-        # Check if authentication successful
         if user is not None:
             login(request, user)
             return HttpResponseRedirect(reverse("index"))
@@ -49,7 +48,6 @@ def register(request):
         username = request.POST["username"]
         email = request.POST["email"]
 
-        # Ensure password matches confirmation
         password = request.POST["password"]
         confirmation = request.POST["confirmation"]
         if password != confirmation:
@@ -57,7 +55,6 @@ def register(request):
                 "message": "Passwords must match."
             })
 
-        # Attempt to create new user
         try:
             user = User.objects.create_user(username, email, password)
             user.save()
@@ -76,30 +73,36 @@ def create_listing(request):
         title = request.POST.get("title")
         description = request.POST.get("description")
         image_url = request.POST.get("image_url")
-        price = float(request.POST.get("price"))  # Convertir el precio a float
+        price = request.POST.get("price")
         category_name = request.POST.get("category")
         owner = request.user
-        
-        owner = User.objects.get(username=owner)
-        category = Category.objects.get(name=category_name)
-        bid = Bid.objects.create(bid=price, bidder=owner)
-        
-        new_listing = Auction_listing.objects.create(
-            title=title,
-            description=description,
-            image_url=image_url,
-            price =bid, 
-            category=category,
-            owner=owner
-        )
-        return HttpResponseRedirect(reverse('index'))
 
-        
+        if title and description and image_url and price and category_name:
+            try:
+                price = float(price)
+            except ValueError:
+                return render(request, "auctions/error.html", {'message': "Invalid price. Please enter a valid number."})
+
+            owner = User.objects.get(username=owner)
+            category = Category.objects.get(name=category_name)
+            bid = Bid.objects.create(bid=price, bidder=owner)
+
+            new_listing = Auction_listing.objects.create(
+                title=title,
+                description=description,
+                image_url=image_url,
+                price=bid,
+                category=category,
+                owner=owner
+            )
+            return HttpResponseRedirect(reverse('index'))
+        else:
+            return render(request, "auctions/error.html", {'message': "Please fill out all the required fields."})
     else:
-        return render(request, "auctions/create.html",{
-            "users" :User.objects.all(),
-            "categorys" :Category.objects.all()
-    })
+        return render(request, "auctions/create.html", {
+            "users": User.objects.all(),
+            "categorys": Category.objects.all()
+        })
 
 def watchlist(request):
     cUser = request.user
@@ -161,35 +164,57 @@ def showCategory(request):
             "categorys": allcategories
         })
         
-def comment(request, id):   
-    cUser = request.user
-    list = Auction_listing.objects.get(pk= id)
-    msg = request.POST['comment']
-    newcomment = Comment.objects.create(
-        commenter = cUser,
-        auction = list,
-        comment = msg
-    )
-    return HttpResponseRedirect(reverse("listing", args=(id, )))
+def comment(request, id):
+    if request.method == 'POST':
+        cUser = request.user
+        listing = Auction_listing.objects.get(pk=id)
+
+        if 'comment' in request.POST and request.POST['comment']:
+            msg = request.POST['comment']
+
+            new_comment = Comment.objects.create(
+                commenter=cUser,
+                auction=listing,
+                comment=msg
+            )
+            return HttpResponseRedirect(reverse("listing", args=(id, )))
+        else:
+            return render(request, "auctions/error.html", {'message': "Please enter a non-empty comment."})
+    else:
+
+        return HttpResponseRedirect(reverse("listing", args=(id, )))
 
 
 
 def bid(request, id):
     if request.method == 'POST':
         cUser = request.user
-        bid = float(request.POST['price'])  # Convert bid to float
-        list = Auction_listing.objects.get(pk=id)
+        listing = Auction_listing.objects.get(pk=id)
 
-        if list.price.bid < bid:
-            newbid = Bid.objects.create(
-                bid=bid,
-                bidder=cUser
-                )
-            list.price = newbid
-            list.save()
-            return HttpResponseRedirect(reverse("listing", args=(id, )))
+        if any(request.POST.values()):
+            if 'price' in request.POST and request.POST['price']:
+                try:
+                    bid_price = float(request.POST['price'])
+                except ValueError:
+                    return render(request, "auctions/error.html", {'message': "Invalid bid value. Please enter a valid number."})
+
+                if not listing.price or listing.price.bid < bid_price:
+                    new_bid = Bid.objects.create(
+                        bid=bid_price,
+                        bidder=cUser
+                    )
+                    listing.price = new_bid
+                    listing.save()
+                    return HttpResponseRedirect(reverse("listing", args=(id, )))
+                else:
+                    return render(request, "auctions/error.html", {'message': "Your bid must be higher than the current highest bid."})
+            else:
+                return render(request, "auctions/error.html", {'message': "Please enter a valid bid."})
         else:
-            return render(request,"auctions/error.html")
+            return render(request, "auctions/error.html", {'message': "Please fill out the form before submitting."})
+    else:
+
+        return HttpResponseRedirect(reverse("listing", args=(id, )))
         
         
 def closeAuc(request,id):
