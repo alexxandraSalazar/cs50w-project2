@@ -153,6 +153,7 @@ def removewatchlist(request,id):
     return HttpResponseRedirect(reverse("listing", args=(id, )))
 
 
+from django.shortcuts import render
 
 def showCategory(request):
     if request.method == "POST":
@@ -163,6 +164,9 @@ def showCategory(request):
             "items": activeListings,
             "categorys": allcategories
         })
+    else:
+        return render(request, "auctions/error.html", {'message': "Not valid method"})
+
         
 def comment(request, id):
     if request.method == 'POST':
@@ -239,6 +243,5 @@ def closeAuc(request, id):
             "winner": winner
         })
     else:
-        # Add a default response in case the request method is not POST
         return render(request, "auctions/error.html", {'message': "Method no valid. If you wanna see the item use /listing/'item id'"})
         

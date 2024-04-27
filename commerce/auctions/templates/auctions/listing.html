@@ -17,8 +17,11 @@
             <form action="{% url 'closeAuc' id=items.id %}" method="POST">
                 {% csrf_token %}
                 <button type="submit" class="btn btn-primary btn-sm">Close Auction</button>
+            </br>
+                <h6>Doble click to close the auction</h6>
             </form>
             <br>
+            
         {% endif %}
 
         {% if listac %}
@@ -39,6 +42,7 @@
     {% endif %}
 
     <h2>Listing: {{ items.title }}</h2>
+    <h2>Listing ID : {{ items.id }}</h2>
     <div class="listing row"> 
         <div class="col-md-3">
             <img class="img-thumbnail" src="{{ items.image_url }}" alt="{{ items.title }}">
